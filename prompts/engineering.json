@@ -1,0 +1,50 @@
+[
+  {
+    "role": "user",
+    "content": "Review this Python function for security vulnerabilities and suggest fixes:\n\ndef authenticate(username, password):\n    query = f\"SELECT * FROM users WHERE username='{username}' AND password='{password}'\"\n    result = db.execute(query)\n    if result:\n        token = base64.b64encode(f\"{username}:{time.time()}\".encode())\n        return {\"token\": token.decode(), \"user\": result[0]}\n    return None"
+  },
+  {
+    "role": "user",
+    "content": "Design a REST API schema for a model serving registry service. It needs endpoints for registering models, listing versions, promoting a version to production, and querying health status. Include request/response bodies and error codes."
+  },
+  {
+    "role": "user",
+    "content": "Write unit tests for this authentication middleware in Go:\n\nfunc AuthMiddleware(next http.Handler) http.Handler {\n    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n        token := r.Header.Get(\"Authorization\")\n        if token == \"\" {\n            http.Error(w, \"unauthorized\", 401)\n            return\n        }\n        claims, err := validateJWT(strings.TrimPrefix(token, \"Bearer \"))\n        if err != nil {\n            http.Error(w, \"invalid token\", 403)\n            return\n        }\n        ctx := context.WithValue(r.Context(), \"user\", claims.Subject)\n        next.ServeHTTP(w, r.WithContext(ctx))\n    })\n}"
+  },
+  {
+    "role": "user",
+    "content": "We have a Kubernetes operator that reconciles InferenceService custom resources. When the replica count changes, the operator should update the HPA and verify readiness before marking the rollout complete. Write the reconciliation logic in Go using controller-runtime."
+  },
+  {
+    "role": "user",
+    "content": "Explain the architectural trade-offs between using a sidecar proxy pattern versus a shared gateway for mTLS termination in a service mesh. Consider latency, resource overhead, certificate rotation, and operational complexity."
+  },
+  {
+    "role": "user",
+    "content": "Write a Dockerfile for a Python ML serving application that uses vLLM. It needs to support GPU passthrough, run as non-root, use a multi-stage build to minimize image size, and include health check endpoints. Base it on UBI9."
+  },
+  {
+    "role": "user",
+    "content": "Review this Kubernetes deployment spec for production readiness. Flag any issues with resource limits, security context, probe configuration, or anti-affinity rules:\n\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: inference-server\nspec:\n  replicas: 3\n  template:\n    spec:\n      containers:\n      - name: vllm\n        image: vllm:latest\n        ports:\n        - containerPort: 8000\n        resources:\n          requests:\n            memory: \"4Gi\"\n            nvidia.com/gpu: 1"
+  },
+  {
+    "role": "user",
+    "content": "Design a circuit breaker pattern for our model serving gateway. When error rates exceed 10% over a 30-second window, the gateway should route to a fallback model. Include the state machine (closed, open, half-open), configuration parameters, and Prometheus metrics to emit."
+  },
+  {
+    "role": "user",
+    "content": "We need to implement distributed tracing across our inference pipeline. The request flows through: API Gateway -> Auth Service -> Rate Limiter -> Model Router -> vLLM. Write the OpenTelemetry instrumentation code for the Model Router component in Python, including span creation, context propagation, and custom attributes for model_name and token_count."
+  },
+  {
+    "role": "user",
+    "content": "Write a GitHub Actions workflow that runs on PR merge to main. It should: build a container image, run unit tests, scan for CVEs with Trivy, push to Quay.io, and trigger a deployment to the staging cluster via ArgoCD. Include caching for pip dependencies."
+  },
+  {
+    "role": "user",
+    "content": "Our vLLM deployment is seeing intermittent OOM kills under heavy load. The GPU has 80GB VRAM, we're running a 70B parameter model with KV cache configured at 0.9. Analyze the memory budget and suggest tuning parameters to prevent OOM while maintaining throughput. Include the math for memory allocation."
+  },
+  {
+    "role": "user",
+    "content": "Write a comprehensive load testing script for our inference endpoint using locust. It should simulate 3 user types: chatbot users (short prompts, fast responses), batch processing users (long prompts, high token generation), and RAG users (medium prompts with context windows). Include percentile latency reporting and token throughput metrics."
+  }
+]

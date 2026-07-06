@@ -1,0 +1,42 @@
+[
+  {
+    "role": "user",
+    "content": "Write a blog post introduction about how enterprises are using AI to transform customer support operations. Target audience is VP-level decision makers. Keep it under 200 words."
+  },
+  {
+    "role": "user",
+    "content": "Create 5 email subject lines for our Q3 product launch announcement. The product is an AI-powered infrastructure monitoring platform. Tone should be professional but not boring."
+  },
+  {
+    "role": "user",
+    "content": "Draft social media copy for LinkedIn announcing our partnership with a major cloud provider to deliver AI inference at scale. Include 3 variations: one formal, one conversational, one data-driven."
+  },
+  {
+    "role": "user",
+    "content": "Write a one-paragraph product description for our AI observability platform. It should emphasize open standards, on-prem deployment, and cost optimization. Target: technical buyers evaluating vendors."
+  },
+  {
+    "role": "user",
+    "content": "Create a comparison table outline for our website showing our AI platform versus AWS SageMaker and Google Vertex AI. Focus on: deployment options, observability, open standards support, and total cost of ownership."
+  },
+  {
+    "role": "user",
+    "content": "Draft a customer success story outline. The customer is a large bank that reduced GPU costs by 60% using AI observability to identify idle resources and right-size deployments. Include: challenge, solution, results, quote."
+  },
+  {
+    "role": "user",
+    "content": "Write a press release headline and first paragraph announcing that our AI platform now supports 50+ inference metrics out of the box. Make it newsworthy, not feature-listy."
+  },
+  {
+    "role": "user",
+    "content": "Create a 30-second elevator pitch for our AI observability solution. The audience is a CTO at a Fortune 500 company who currently uses Datadog for monitoring but has no AI-specific observability."
+  },
+  {
+    "role": "user",
+    "content": "Write three customer persona descriptions for our marketing website: Platform Engineer, ML Engineer, and FinOps Lead. For each, include their daily challenges and what they care about most."
+  },
+  {
+    "role": "user",
+    "content": "Draft a webinar title and description for a session about AI cost optimization. It should attract both technical and business audiences. Include 3 key takeaways attendees will walk away with."
+  }
+]

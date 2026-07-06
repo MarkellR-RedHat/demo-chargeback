@@ -1,0 +1,34 @@
+[
+  {
+    "role": "user",
+    "content": "Draft a response to a customer asking why their API rate limit was exceeded. Be empathetic and include next steps for requesting a limit increase."
+  },
+  {
+    "role": "user",
+    "content": "A customer reports slow inference response times. Write a support response asking for the right diagnostic information: model name, request volume, cluster size, and whether they've checked GPU utilization."
+  },
+  {
+    "role": "user",
+    "content": "Summarize this support ticket and suggest next steps: Customer says their model deployment failed with 'insufficient GPU memory' error. They're trying to deploy a 70B model on a node with 40GB VRAM."
+  },
+  {
+    "role": "user",
+    "content": "Write a polite follow-up to a customer who submitted a support ticket 5 days ago and hasn't responded to our request for logs. Keep it brief."
+  },
+  {
+    "role": "user",
+    "content": "A customer asks: 'What's the difference between the Perses dashboards and Grafana? Why should I switch?' Draft a clear, non-promotional response."
+  },
+  {
+    "role": "user",
+    "content": "Draft a response to a customer who wants to export their inference metrics to Datadog. Explain the OTel export path and what configuration they need."
+  },
+  {
+    "role": "user",
+    "content": "A customer reports that their KV cache hit rate dropped from 85% to 20% after a model update. Write a troubleshooting checklist they can follow."
+  },
+  {
+    "role": "user",
+    "content": "Write a brief knowledge base article: 'How to check GPU utilization for your AI workloads in OpenShift AI.' Three steps, no jargon."
+  }
+]

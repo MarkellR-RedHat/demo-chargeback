@@ -1,0 +1,94 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: chargeback-demo-load
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+        # Merge CA bundles for TLS to MLflow
+        - name: merge-ca
+          image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              cat /etc/pki/tls/certs/ca-bundle.crt > /ca-out/combined-ca.crt || true
+              cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt >> /ca-out/combined-ca.crt 2>/dev/null || true
+              cat /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt >> /ca-out/combined-ca.crt 2>/dev/null || true
+              echo "CA bundle ready"
+          volumeMounts:
+            - name: ca-bundle
+              mountPath: /ca-out
+      containers:
+        - name: load-generator
+          # Replace with your built image, or use the inline approach below
+          image: registry.access.redhat.com/ubi9/python-311:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              pip install --quiet mlflow openai python-dotenv &&
+              cd /app &&
+              python generate-load.py --duration ${DURATION_MINUTES} --experiment ${MLFLOW_EXPERIMENT_NAME}
+          env:
+            # MaaS Gateway -- replace with your gateway URL
+            - name: MAAS_GATEWAY
+              value: "https://your-maas-gateway-url"
+            - name: MAAS_MODEL_PRIMARY
+              value: "gemma4"
+            - name: MAAS_MODEL_SECONDARY
+              value: "qwen35-9b"
+            # API Keys from secret
+            - name: API_KEY_ENGINEERING
+              valueFrom:
+                secretKeyRef:
+                  name: chargeback-demo-keys
+                  key: API_KEY_ENGINEERING
+            - name: API_KEY_MARKETING
+              valueFrom:
+                secretKeyRef:
+                  name: chargeback-demo-keys
+                  key: API_KEY_MARKETING
+            - name: API_KEY_SUPPORT
+              valueFrom:
+                secretKeyRef:
+                  name: chargeback-demo-keys
+                  key: API_KEY_SUPPORT
+            # MLflow config -- replace with your MLflow internal URL and namespace
+            - name: MLFLOW_TRACKING_URI
+              value: "https://mlflow.redhat-ods-applications.svc.cluster.local:8443"
+            - name: MLFLOW_TRACKING_TOKEN_FILE
+              value: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+            - name: MLFLOW_WORKSPACE
+              value: "your-namespace"
+            - name: MLFLOW_EXPERIMENT_NAME
+              value: "ai-chargeback-demo"
+            - name: REQUESTS_CA_BUNDLE
+              value: "/ca-out/combined-ca.crt"
+            # Load settings
+            - name: DURATION_MINUTES
+              value: "5"
+            - name: ENGINEERING_INTERVAL
+              value: "5"
+            - name: MARKETING_INTERVAL
+              value: "12"
+            - name: SUPPORT_INTERVAL
+              value: "20"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+            - name: prompts
+              mountPath: /app/prompts
+            - name: ca-bundle
+              mountPath: /ca-out
+      volumes:
+        - name: app-code
+          configMap:
+            name: chargeback-demo-code
+        - name: prompts
+          configMap:
+            name: chargeback-demo-prompts
+        - name: ca-bundle
+          emptyDir: {}

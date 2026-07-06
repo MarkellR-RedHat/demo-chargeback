@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chargeback-demo-prompts
+data:
+  engineering.json: |
+    [
+      {"role": "user", "content": "Review this Python function for security vulnerabilities and suggest fixes: def authenticate(username, password): query = f\"SELECT * FROM users WHERE username='{username}' AND password='{password}'\" result = db.execute(query) return result"},
+      {"role": "user", "content": "Design a REST API schema for a model serving registry service with endpoints for registering models, listing versions, promoting to production, and querying health status."},
+      {"role": "user", "content": "Write unit tests for an authentication middleware in Go that validates JWT tokens from the Authorization header and injects the user subject into the request context."},
+      {"role": "user", "content": "Explain the architectural trade-offs between using a sidecar proxy pattern versus a shared gateway for mTLS termination in a service mesh."},
+      {"role": "user", "content": "Write a Dockerfile for a Python ML serving application that uses vLLM with GPU passthrough, non-root execution, multi-stage build, and health check endpoints on UBI9."},
+      {"role": "user", "content": "Design a circuit breaker pattern for a model serving gateway. When error rates exceed 10% over 30 seconds, route to a fallback model. Include state machine and Prometheus metrics."},
+      {"role": "user", "content": "Our vLLM deployment sees intermittent OOM kills. GPU has 80GB VRAM, running a 70B model with KV cache at 0.9. Analyze the memory budget and suggest tuning parameters."},
+      {"role": "user", "content": "Write OpenTelemetry instrumentation code for a Model Router component in Python, including span creation, context propagation, and custom attributes for model_name and token_count."}
+    ]
+  marketing.json: |
+    [
+      {"role": "user", "content": "Write a blog post introduction about how enterprises are using AI to transform customer support operations. Target audience is VP-level decision makers. Under 200 words."},
+      {"role": "user", "content": "Create 5 email subject lines for our Q3 product launch. The product is an AI-powered infrastructure monitoring platform."},
+      {"role": "user", "content": "Draft social media copy for LinkedIn announcing our partnership with a cloud provider to deliver AI inference at scale. Three variations: formal, conversational, data-driven."},
+      {"role": "user", "content": "Write a one-paragraph product description for our AI observability platform emphasizing open standards, on-prem deployment, and cost optimization."},
+      {"role": "user", "content": "Create a 30-second elevator pitch for our AI observability solution for a CTO at a Fortune 500 company who currently uses Datadog."},
+      {"role": "user", "content": "Draft a customer success story outline. Large bank reduced GPU costs by 60% using AI observability. Include challenge, solution, results, quote."}
+    ]
+  support.json: |
+    [
+      {"role": "user", "content": "Draft a response to a customer asking why their API rate limit was exceeded. Be empathetic and include next steps for requesting a limit increase."},
+      {"role": "user", "content": "A customer reports slow inference response times. Write a support response asking for diagnostic information: model name, request volume, cluster size."},
+      {"role": "user", "content": "Write a polite follow-up to a customer who submitted a support ticket 5 days ago and hasn't responded to our request for logs."},
+      {"role": "user", "content": "A customer asks the difference between Perses dashboards and Grafana. Draft a clear, non-promotional response."},
+      {"role": "user", "content": "Write a brief knowledge base article: How to check GPU utilization for your AI workloads in OpenShift AI. Three steps, no jargon."}
+    ]
