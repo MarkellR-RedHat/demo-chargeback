@@ -43,34 +43,77 @@ This demo simulates three business units (Engineering, Marketing, Support) consu
 - MaaS Gateway configured with at least one model endpoint
 - 3 API keys (one per simulated department) from RHOAI Dashboard > Gen AI Studio
 - Cluster Observability Operator (COO) installed for Perses dashboards
+- `oc` CLI installed and access to the cluster
 
 ## Quick Start
 
 ### Option A: Run from your laptop
 
 ```bash
-# 1. Configure
-cp .env.example .env
-# Edit .env: set MAAS_GATEWAY, API keys, model names
+# 1. Log in to your OpenShift cluster
+oc login https://api.<your-cluster>.dev:6443
+# Follow the prompts to authenticate (browser or token)
 
-# 2. Install dependencies
+# 2. Configure environment
+cp .env.example .env
+```
+
+Edit `.env` with your values:
+
+```bash
+# Required -- get these from your cluster admin or RHOAI Dashboard
+MAAS_GATEWAY=https://maas.apps.<your-cluster>.dev
+API_KEY_ENGINEERING=<key from RHOAI Dashboard > Gen AI Studio > API keys>
+API_KEY_MARKETING=<separate key>
+API_KEY_SUPPORT=<separate key>
+
+# Required for remote MLflow -- without these, traces log to local SQLite only
+MLFLOW_TRACKING_URI=https://<rhoai-dashboard>.apps.<your-cluster>.dev/mlflow
+MLFLOW_TRACKING_TOKEN=<paste output of: oc whoami -t>
+MLFLOW_WORKSPACE=<your OpenShift namespace, e.g. user-janedoe>
+```
+
+> **Important:** The `MLFLOW_TRACKING_TOKEN` is an OpenShift session token that expires.
+> If MLflow stops working (you'll see a JSON parsing warning), refresh it:
+> ```bash
+> # Re-login if your session expired
+> oc login https://api.<your-cluster>.dev:6443
+>
+> # Update the token in .env
+> sed -i '' "s|^MLFLOW_TRACKING_TOKEN=.*|MLFLOW_TRACKING_TOKEN=$(oc whoami -t)|" .env
+> ```
+
+```bash
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 3. Verify connectivity
+# 4. Verify connectivity
 ./setup-tenants.sh
 
-# 4. Generate traffic (5 minutes by default)
+# 5. Generate traffic (5 minutes by default)
 python generate-load.py
+```
+
+By default, all three departments log to one MLflow experiment (`ai-chargeback-demo`).
+To send each department's traces to its own experiment, use:
+
+```bash
+python generate-load.py --split-experiments
+# Creates: ai-chargeback-demo-engineering, ai-chargeback-demo-marketing, ai-chargeback-demo-support
 ```
 
 ### Option B: Run on the cluster
 
 ```bash
-# 1. Configure
+# 1. Log in to your OpenShift cluster
+oc login https://api.<your-cluster>.dev:6443
+
+# 2. Configure
 cp .env.example .env
 # Edit .env: set MAAS_GATEWAY, API keys, MLflow internal URI, namespace
+# Note: MLFLOW_TRACKING_TOKEN is not needed for on-cluster -- the Job uses a service account token
 
-# 2. Deploy as a Kubernetes Job
+# 3. Deploy as a Kubernetes Job
 ./deploy-on-cluster.sh
 ```
 
@@ -80,6 +123,9 @@ cp .env.example .env
 |-----------|----------|-------|
 | Perses Usage | OpenShift Console > Observe > Dashboards > Usage | Token consumption by user/model |
 | MLflow | OpenShift AI Dashboard > MLflow > "ai-chargeback-demo" | Cost by model, traces per department |
+
+> **Tip:** Make sure you select the correct workspace (top-left dropdown) and experiment name in the MLflow UI.
+> If you used `--split-experiments`, look for `ai-chargeback-demo-engineering` etc. instead of `ai-chargeback-demo`.
 
 ## Load Generators
 
@@ -112,8 +158,19 @@ All settings are in `.env`. Key options:
 | `MAAS_MODEL_SECONDARY` | `qwen35-9b` | Model for support |
 | `DURATION_MINUTES` | `5` | How long to run |
 | `MLFLOW_TRACKING_URI` | -- | Remote MLflow URL (blank = local SQLite) |
+| `MLFLOW_TRACKING_TOKEN` | -- | OpenShift token from `oc whoami -t` (required for remote MLflow) |
+| `MLFLOW_WORKSPACE` | -- | Your OpenShift namespace, e.g. `user-janedoe` (required for remote MLflow) |
 
 See `.env.example` for the full list.
+
+### Troubleshooting
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| `[WARN] Remote MLflow with workspace failed: Expecting value...` | Expired OpenShift token | Run `oc login`, then update `MLFLOW_TRACKING_TOKEN=$(oc whoami -t)` in `.env` |
+| MLflow falls back to local SQLite | `MLFLOW_TRACKING_URI` or `MLFLOW_TRACKING_TOKEN` not set | Fill in both values in `.env` |
+| MLflow UI shows 0 traces | Viewing the wrong experiment | Check experiment name -- `ai-chargeback-demo` (default) or `ai-chargeback-demo-<dept>` (with `--split-experiments`) |
+| `setup-tenants.sh` shows HTTP 401 | Invalid API key | Regenerate keys in RHOAI Dashboard > Gen AI Studio |
 
 ## Files
 
