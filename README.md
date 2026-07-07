@@ -84,7 +84,9 @@ MLFLOW_WORKSPACE=<your OpenShift namespace, e.g. user-janedoe>
 > ```
 
 ```bash
-# 3. Install dependencies
+# 3. Create a virtual environment and install dependencies
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 
 # 4. Verify connectivity
@@ -93,6 +95,11 @@ pip install -r requirements.txt
 # 5. Generate traffic (5 minutes by default)
 python generate-load.py
 ```
+
+> **Note:** On subsequent runs, activate the existing venv before running:
+> ```bash
+> source .venv/bin/activate
+> ```
 
 By default, all three departments log to one MLflow experiment (`ai-chargeback-demo`).
 To send each department's traces to its own experiment, use:
