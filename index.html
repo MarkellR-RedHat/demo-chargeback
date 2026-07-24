@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Cost Intelligence: Observability & Chargeback | Platform & Scale</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@700;900&family=Red+Hat+Text:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --red: #ee0000;
+      --red-soft: rgba(238, 0, 0, 0.08);
+      --grad-red: linear-gradient(135deg, #ee0000, #cc0000, #ff3333, #ee0000);
+      --grad-flow: linear-gradient(160deg, #ee0000, #cc0000, #ee0000, #ffffff, #ee0000, #cc0000, #ee0000);
+      --grad: linear-gradient(152deg, #ee0000 0%, #cc0000 47%, #ffffff 100%);
+      --glow: rgba(238, 0, 0, 0.26);
+      --font-display: 'Red Hat Display', sans-serif;
+      --font-text: 'Red Hat Text', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    canvas#particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      opacity: 0.9;
+    }
+
+    @keyframes gradSweep {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--grad-red);
+      background-size: 220% 220%;
+      animation: gradSweep 8s ease-in-out infinite;
+      transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 100;
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 28px;
+      right: 32px;
+      z-index: 100;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      letter-spacing: 1px;
+      user-select: none;
+    }
+
+    .slide-container { position: relative; width: 100%; height: 100vh; overflow: hidden; z-index: 1; }
+    .slide-track { display: flex; height: 100%; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    .slide {
+      flex: 0 0 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 60px 80px;
+      position: relative;
+    }
+
+    .slide-inner { max-width: 1200px; width: 100%; position: relative; z-index: 2; }
+
+    .slide-number {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 14px;
+      color: var(--text);
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 56px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .slide-title .accent {
+      background: var(--grad-red);
+      background-size: 220% 220%;
+      animation: gradSweep 8s ease-in-out infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide-subtitle {
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 48px;
+      max-width: 750px;
+      line-height: 1.5;
+    }
+
+    .slide-body { margin-top: 40px; }
+
+    .anim {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .slide.active .anim { opacity: 1; transform: translateY(0); }
+    .slide.active .anim-d1 { transition-delay: 0.1s; }
+    .slide.active .anim-d2 { transition-delay: 0.2s; }
+    .slide.active .anim-d3 { transition-delay: 0.3s; }
+    .slide.active .anim-d4 { transition-delay: 0.4s; }
+    .slide.active .anim-d5 { transition-delay: 0.5s; }
+    .slide.active .anim-d6 { transition-delay: 0.6s; }
+    .slide.active .anim-d7 { transition-delay: 0.7s; }
+
+    .glass {
+      background: linear-gradient(160deg, #ffffff, #fff0f0, #ffffff, #ffe0e0, #ffffff, #fff0f0, #ffffff);
+      background-size: 220% 220%;
+      animation: gradSweep 8s ease-in-out infinite;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08);
+      color: var(--text);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(238, 0, 0, 0.14);
+    }
+
+    .glass-gradient {
+      background: linear-gradient(var(--bg), var(--bg)) padding-box,
+                  var(--grad-red) border-box;
+      background-size: auto, 220% 220%;
+      animation: gradSweep 8s ease-in-out infinite;
+      border: 1.5px solid transparent;
+      border-radius: 16px;
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-gradient:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(238, 0, 0, 0.12);
+    }
+
+    /* ===== SLIDE 1: AI Story-style hero ===== */
+    .slide.slide-hero {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .hero-home {
+      display: flex;
+      align-items: stretch;
+      gap: clamp(14px, 1.4vw, 22px);
+      padding-left: clamp(24px, 2.4vw, 50px);
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #fbfcfe;
+    }
+
+    .hero-panel {
+      position: relative;
+      z-index: 3;
+      flex: 0 0 clamp(340px, 38%, 560px);
+      text-align: left;
+      color: #1a1a1a;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(32px, 3.6vw, 64px);
+      border-radius: 6px;
+      box-shadow: 0 30px 70px -34px rgba(50, 0, 0, 0.45);
+      background: var(--grad-flow);
+      background-size: 220% 220%;
+      animation: slideUp 0.8s ease, gradSweep 8s ease-in-out infinite;
+    }
+
+    .hero-panel::after {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -25%;
+      width: 70%;
+      height: 160%;
+      pointer-events: none;
+      background: radial-gradient(closest-side, rgba(255,255,255,0.18), transparent 70%);
+    }
+
+    .hero-panel > * { position: relative; z-index: 1; }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.025em;
+      color: #1a1a1a;
+      margin-bottom: 26px;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.08);
+      align-self: center;
+      width: fit-content;
+      text-align: center;
+    }
+
+    .hero-title .tl-1 {
+      display: block;
+      font-size: clamp(1.6rem, 2.6vw, 2.6rem);
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .hero-title .tl-2 {
+      display: block;
+      font-size: clamp(3rem, 6vw, 5.2rem);
+      line-height: 0.84;
+      margin-top: 2px;
+    }
+
+    .hero-sub {
+      font-family: var(--font-text);
+      font-size: clamp(1rem, 1.3vw, 1.3rem);
+      line-height: 1.5;
+      color: rgba(0,0,0,0.75);
+      max-width: 400px;
+      margin-bottom: 30px;
+    }
+
+    .hero-begin {
+      font-family: var(--font-text);
+      font-weight: 700;
+      font-size: 1.08rem;
+      padding: 16px 38px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      background: #1a1a1a;
+      color: #fff;
+      box-shadow: 0 16px 44px -18px rgba(0,0,0,0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      align-self: flex-start;
+    }
+
+    .hero-begin:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 50px -16px rgba(0,0,0,0.6);
+    }
+
+    .hero-accent {
+      flex: 0 0 clamp(14px, 1.4vw, 26px);
+      align-self: stretch;
+      border-radius: 6px;
+      box-shadow: 0 30px 70px -42px rgba(50,0,0,0.4);
+      background: var(--grad-flow);
+      background-size: 220% 220%;
+      animation: slideUp 0.8s ease, gradSweep 8s ease-in-out infinite;
+    }
+
+    .hero-right {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(20px, 2.4vw, 44px);
+      padding-left: 0;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .fixed-logo {
+      position: fixed;
+      top: 24px;
+      right: 32px;
+      z-index: 101;
+      height: clamp(28px, 3vw, 40px);
+      width: auto;
+    }
+
+    .hero-visual {
+      position: relative;
+      z-index: 1;
+      flex: 1 1 auto;
+      align-self: stretch;
+      width: 100%;
+      min-height: 200px;
+    }
+
+    #orbCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ===== SLIDES 2-5 ===== */
+
+    /* Slide 2: Problem cards (3 columns) */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 8px;
+    }
+
+    .problem-card {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .problem-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+      background: rgba(238, 0, 0, 0.08);
+      color: var(--text);
+    }
+
+    .problem-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .problem-text {
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Slide 3: Invoice */
+    .invoice {
+      padding: 32px;
+      max-width: 920px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .invoice-from {
+      font-size: 12px;
+      color: var(--text);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .invoice-from strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: 0;
+      margin-top: 4px;
+    }
+
+    .invoice-total {
+      text-align: right;
+    }
+
+    .invoice-total-label {
+      font-size: 11px;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .invoice-total-amount {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 44px;
+      line-height: 1.1;
+      background: var(--grad-red);
+      background-size: 220% 220%;
+      animation: gradSweep 8s ease-in-out infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .invoice-total-period {
+      font-size: 13px;
+      color: var(--text);
+      margin-top: 2px;
+    }
+
+    .line-items {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .line-items th {
+      text-align: left;
+      font-size: 10px;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 0 0 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .line-items th:last-child {
+      text-align: right;
+    }
+
+    .line-items td {
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .line-items td:last-child {
+      text-align: right;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--text);
+    }
+
+    .dept-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .dept-label {
+      font-weight: 600;
+    }
+
+    .model-label {
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .bar-cell { width: 140px; }
+
+    .bar-bg {
+      width: 100%;
+      height: 5px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 0;
+      transition: width 1.8s cubic-bezier(.22,1,.36,1);
+    }
+
+    .invoice-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 16px;
+    }
+
+    .invoice-insight {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      max-width: 440px;
+      line-height: 1.4;
+      color: var(--text);
+      font-style: italic;
+    }
+
+    .invoice-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--red);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 10px rgba(238,0,0,0.5);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(238,0,0,0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(238,0,0,0); }
+    }
+
+    /* Slide 4: Solution cards (3 columns) */
+    .solution-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 8px;
+    }
+
+    .solution-card {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .solution-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+      background: rgba(238, 0, 0, 0.08);
+      color: var(--text);
+    }
+
+    .solution-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .solution-text {
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .check-list {
+      list-style: none;
+      margin-top: 14px;
+    }
+
+    .check-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 4px 0;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .check-icon {
+      color: var(--red);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Slide 5: The Result */
+    .result-headline {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 64px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .result-headline .accent {
+      background: var(--grad-red);
+      background-size: 220% 220%;
+      animation: gradSweep 8s ease-in-out infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .result-body {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .result-text {
+      font-size: 20px;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .result-stat {
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    .result-stat-value {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 36px;
+      background: var(--grad-red);
+      background-size: 220% 220%;
+      animation: gradSweep 8s ease-in-out infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .result-stat-label {
+      color: var(--text);
+      font-size: 13px;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .footer {
+      margin-top: 48px;
+      text-align: center;
+    }
+
+    .footer-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .footer-title {
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-home { flex-direction: column; padding-left: 0; padding: clamp(16px, 2vw, 24px); }
+      .hero-panel { flex: 0 0 auto; }
+      .hero-accent { display: none; }
+      .hero-right { padding: 16px 0 0; }
+      .hero-visual { min-height: 200px; max-height: 40vh; }
+    }
+
+    @media (max-width: 1200px) {
+      .slide-title { font-size: 44px; }
+      .result-headline { font-size: 48px; }
+    }
+
+    @media (max-width: 768px) {
+      .slide { padding: 60px 24px 80px; }
+      .slide-title { font-size: 36px; }
+      .slide-subtitle { font-size: 18px; }
+      .problem-grid, .solution-grid { grid-template-columns: 1fr; }
+      .result-headline { font-size: 36px; }
+      .result-stats { grid-template-columns: repeat(2, 1fr); }
+      .invoice-header { flex-direction: column; gap: 12px; }
+      .invoice-total { text-align: left; }
+      .bar-cell { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <img src="redhat-logo.png" alt="Red Hat" class="fixed-logo">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="slide-counter" id="slideCounter">1 / 5</div>
+
+  <div class="slide-container">
+    <div class="slide-track" id="slideTrack">
+
+      <!-- Slide 1: Hero -->
+      <div class="slide slide-hero active">
+        <div class="hero-home">
+          <div class="hero-panel">
+            <div class="hero-title">
+              <span class="tl-1">AI Spend Is Soaring</span>
+              <span class="tl-2">Who's Paying?</span>
+            </div>
+            <p class="hero-sub">Three departments, two models, one MaaS Gateway on OpenShift AI. Without per-key attribution, the CFO can't answer a simple question: what did AI cost us this quarter?</p>
+            <button class="hero-begin" id="heroBegin">Begin <span>&rarr;</span></button>
+          </div>
+          <div class="hero-accent"></div>
+          <div class="hero-right">
+            <div class="hero-visual">
+              <canvas id="orbCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: The Blindness Problem -->
+      <div class="slide">
+        <div class="slide-inner">
+          <div class="slide-number anim">02</div>
+          <h2 class="slide-title anim anim-d1">The <span class="accent">Blindness</span> Problem</h2>
+          <p class="slide-subtitle anim anim-d2">Engineering, Marketing, and Support all route through the same MaaS Gateway. GPU bills arrive as one number. Finance can't allocate, forecast, or hold anyone accountable.</p>
+          <div class="slide-body">
+            <div class="problem-grid">
+              <div class="problem-card glass anim anim-d3">
+                <div class="problem-icon">&#9888;</div>
+                <div class="problem-title">No Cost Attribution</div>
+                <div class="problem-text">GPU bills arrive as one lump sum. No breakdown by team, model, or project. Finance can't allocate costs to the right P&L.</div>
+              </div>
+              <div class="problem-card glass anim anim-d4">
+                <div class="problem-icon">&#9783;</div>
+                <div class="problem-title">No Usage Visibility</div>
+                <div class="problem-text">Which team consumes the most tokens? Which model costs the most? Nobody knows until the quarterly invoice arrives.</div>
+              </div>
+              <div class="problem-card glass anim anim-d5">
+                <div class="problem-icon">&#9878;</div>
+                <div class="problem-title">No Forecast Accuracy</div>
+                <div class="problem-text">Without per-department usage data, finance can't build reliable AI spend forecasts. Budget season is pure guesswork.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Every Dollar Traced -->
+      <div class="slide">
+        <div class="slide-inner">
+          <div class="slide-number anim">03</div>
+          <h2 class="slide-title anim anim-d1">Every AI Dollar, <span class="accent">Traced</span></h2>
+          <p class="slide-subtitle anim anim-d2">Each department gets an API key from the RHOAI Dashboard. The MaaS Gateway routes requests to vLLM. The Cluster Observability Operator feeds Prometheus, Perses renders dashboards, MLflow traces every token.</p>
+          <div class="slide-body">
+            <div class="invoice glass anim anim-d3">
+              <div class="invoice-header">
+                <div class="invoice-from">
+                  AI Infrastructure &middot; OpenShift AI 3.4
+                  <strong>Internal Chargeback Statement</strong>
+                </div>
+                <div class="invoice-total">
+                  <div class="invoice-total-label">Quarterly Total</div>
+                  <div class="invoice-total-amount">$1,461,000</div>
+                  <div class="invoice-total-period">Q3 2026 &middot; 3 cost centers &middot; 2 models on vLLM</div>
+                </div>
+              </div>
+              <table class="line-items">
+                <thead>
+                  <tr>
+                    <th>Cost Center</th>
+                    <th>Model</th>
+                    <th>Share</th>
+                    <th class="bar-cell"></th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="dept-dot" style="background:#1a1a1a"></span><span class="dept-label">Engineering</span></td>
+                    <td class="model-label">gemma4</td>
+                    <td>60%</td>
+                    <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" data-fill="60" style="background:linear-gradient(90deg,#ee0000,#1a1a1a)"></div></div></td>
+                    <td>$876,600</td>
+                  </tr>
+                  <tr>
+                    <td><span class="dept-dot" style="background:#ee0000"></span><span class="dept-label">Marketing</span></td>
+                    <td class="model-label">gemma4</td>
+                    <td>25%</td>
+                    <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" data-fill="25" style="background:linear-gradient(90deg,#ee0000,#cc0000)"></div></div></td>
+                    <td>$365,250</td>
+                  </tr>
+                  <tr>
+                    <td><span class="dept-dot" style="background:#888888"></span><span class="dept-label">Support</span></td>
+                    <td class="model-label">qwen35-9b</td>
+                    <td>15%</td>
+                    <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" data-fill="15" style="background:#888888"></div></div></td>
+                    <td>$219,150</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="invoice-footer">
+                <div class="invoice-insight">"Support chose the cheaper model, and it's working. Can Engineering do the same?"</div>
+                <div class="invoice-status"><span class="live-dot"></span> Live on OpenShift</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: How It Works -->
+      <div class="slide">
+        <div class="slide-inner">
+          <div class="slide-number anim">04</div>
+          <h2 class="slide-title anim anim-d1">Three Capabilities. <span class="accent">Zero Instrumentation.</span></h2>
+          <p class="slide-subtitle anim anim-d2">Built into OpenShift AI 3.4. API keys from RHOAI Dashboard, metrics from Cluster Observability Operator, dashboards from Perses, traces from MLflow.</p>
+          <div class="slide-body">
+            <div class="solution-grid">
+              <div class="solution-card glass anim anim-d3">
+                <div class="solution-icon">&#9919;</div>
+                <div class="solution-title">MaaS Gateway</div>
+                <div class="solution-text">Each department gets its own API key from RHOAI Dashboard. Gateway routes requests by model and key to vLLM servers.</div>
+                <ul class="check-list">
+                  <li><span class="check-icon">&#10003;</span> API key per department</li>
+                  <li><span class="check-icon">&#10003;</span> Routes to vLLM / llm-d</li>
+                </ul>
+              </div>
+              <div class="solution-card glass anim anim-d4">
+                <div class="solution-icon">&#9881;</div>
+                <div class="solution-title">MLflow Tracing</div>
+                <div class="solution-text">Every inference call logged with token counts, model, and cost. Split by department or view aggregate across the organization.</div>
+                <ul class="check-list">
+                  <li><span class="check-icon">&#10003;</span> Per-request token traces</li>
+                  <li><span class="check-icon">&#10003;</span> Split or aggregate experiments</li>
+                </ul>
+              </div>
+              <div class="solution-card glass anim anim-d5">
+                <div class="solution-icon">&#9783;</div>
+                <div class="solution-title">Perses Dashboards</div>
+                <div class="solution-text">OpenShift Console, Observe, Dashboards. Filter by subscription to isolate one team. Filter by model to split costs.</div>
+                <ul class="check-list">
+                  <li><span class="check-icon">&#10003;</span> COO to Prometheus to Perses</li>
+                  <li><span class="check-icon">&#10003;</span> Filter by subscription and model</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: The Result -->
+      <div class="slide">
+        <div class="slide-inner" style="text-align: center;">
+          <div class="slide-number anim" style="text-align: left;">05</div>
+          <div class="result-body">
+            <div class="result-headline anim anim-d1">
+              <span class="accent">100% Attribution.</span><br>
+              <span class="accent">Zero Guesswork.</span>
+            </div>
+            <p class="result-text anim anim-d2">Every AI dollar traced to a team, a model, a purpose. Built into OpenShift AI &mdash; no additional instrumentation, no third-party billing tools, no manual spreadsheets.</p>
+            <div class="result-stats anim anim-d3">
+              <div class="result-stat glass-gradient">
+                <div class="result-stat-value">100%</div>
+                <div class="result-stat-label">Cost attribution coverage</div>
+              </div>
+              <div class="result-stat glass-gradient">
+                <div class="result-stat-value">&lt;5m</div>
+                <div class="result-stat-label">Time to generate chargeback</div>
+              </div>
+              <div class="result-stat glass-gradient">
+                <div class="result-stat-value">3x</div>
+                <div class="result-stat-label">Faster budget forecasting</div>
+              </div>
+              <div class="result-stat glass-gradient">
+                <div class="result-stat-value">$0</div>
+                <div class="result-stat-label">Additional instrumentation</div>
+              </div>
+            </div>
+          </div>
+          <div class="footer anim anim-d4">
+            <div class="footer-name">Markell Rawls</div>
+            <div class="footer-title">AI Developer Advocate, Red Hat</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+
+    // --- Background Particle Field (all slides) ---
+    const bgCanvas = document.getElementById('particles');
+    const bgCtx = bgCanvas.getContext('2d');
+    let bgW, bgH, bgDpr;
+
+    function bgResize() {
+      bgDpr = Math.min(2, window.devicePixelRatio || 1);
+      bgW = window.innerWidth;
+      bgH = window.innerHeight;
+      bgCanvas.width = bgW * bgDpr;
+      bgCanvas.height = bgH * bgDpr;
+      bgCtx.setTransform(bgDpr, 0, 0, bgDpr, 0, 0);
+    }
+    bgResize();
+    window.addEventListener('resize', bgResize);
+
+    const bgCount = Math.min(200, Math.round(window.innerWidth * window.innerHeight / 7000));
+    const bgParticles = [];
+    for (let i = 0; i < bgCount; i++) {
+      bgParticles.push({
+        x: Math.random() * bgW, y: Math.random() * bgH,
+        vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6,
+        r: 1 + Math.random() * 1.5, seed: Math.random() * 6.283
+      });
+    }
+
+    function drawBgParticles() {
+      bgCtx.clearRect(0, 0, bgW, bgH);
+      const t = performance.now() / 1000;
+      const alpha = currentSlide === 0 ? 0.04 : 0.18;
+
+      bgParticles.forEach(p => {
+        p.x += p.vx + Math.sin(t * 0.3 + p.seed) * 0.15;
+        p.y += p.vy + Math.cos(t * 0.4 + p.seed) * 0.15;
+        if (p.x < 0 || p.x > bgW) p.vx *= -1;
+        if (p.y < 0 || p.y > bgH) p.vy *= -1;
+        p.x = Math.max(0, Math.min(bgW, p.x));
+        p.y = Math.max(0, Math.min(bgH, p.y));
+
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, p.r, 0, 6.283);
+        bgCtx.fillStyle = `rgba(238, 0, 0, ${alpha})`;
+        bgCtx.fill();
+      });
+
+      if (currentSlide !== 0) {
+        for (let i = 0; i < bgParticles.length; i++) {
+          for (let j = i + 1; j < bgParticles.length; j++) {
+            const dx = bgParticles[i].x - bgParticles[j].x;
+            const dy = bgParticles[i].y - bgParticles[j].y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < 16900) {
+              bgCtx.beginPath();
+              bgCtx.moveTo(bgParticles[i].x, bgParticles[i].y);
+              bgCtx.lineTo(bgParticles[j].x, bgParticles[j].y);
+              bgCtx.strokeStyle = `rgba(238, 0, 0, ${0.07 * (1 - Math.sqrt(d2) / 130)})`;
+              bgCtx.lineWidth = 0.5;
+              bgCtx.stroke();
+            }
+          }
+        }
+      }
+
+      requestAnimationFrame(drawBgParticles);
+    }
+    drawBgParticles();
+
+    // --- Orbital Rings (slide 1 only) ---
+    const orbCanvas = document.getElementById('orbCanvas');
+    const oCtx = orbCanvas.getContext('2d');
+    const RING_COUNT = 5;
+    const PER_RING = 120;
+    const ON = RING_COUNT * PER_RING;
+    const ORB_RAD = 0.44;
+    let oW, oH, oDpr = Math.min(2, window.devicePixelRatio || 1);
+    let ot = 0, orbRaf = null;
+    let omx = -1e4, omy = -1e4;
+
+    const ringDefs = [
+      { r: 1.0,  tiltX: 0.0,   tiltZ: 0.0,   speed: 0.18 },
+      { r: 0.86, tiltX: 0.65,  tiltZ: 0.3,   speed: -0.14 },
+      { r: 0.72, tiltX: -0.45, tiltZ: 0.75,  speed: 0.22 },
+      { r: 1.1,  tiltX: 0.35,  tiltZ: -0.55, speed: -0.11 },
+      { r: 0.55, tiltX: 1.2,   tiltZ: 0.15,  speed: 0.28 },
+    ];
+
+    const OP = [];
+    for (let ri = 0; ri < RING_COUNT; ri++) {
+      for (let i = 0; i < PER_RING; i++) {
+        OP.push({
+          ri,
+          baseAngle: (i / PER_RING) * Math.PI * 2 + ri * 0.7,
+          x: 0, y: 0, z: 0,
+          seed: (ri * PER_RING + i) * 127.1 % 6.283
+        });
+      }
+    }
+    let oPlaced = false;
+
+    function oTarget(idx, cx, cy, R) {
+      const p = OP[idx];
+      const ring = ringDefs[p.ri];
+      const angle = p.baseAngle + ot * ring.speed;
+
+      let px = Math.cos(angle) * ring.r;
+      let py = 0;
+      let pz = Math.sin(angle) * ring.r;
+
+      const cxr = Math.cos(ring.tiltX), sxr = Math.sin(ring.tiltX);
+      let ny = py * cxr - pz * sxr;
+      let nz = py * sxr + pz * cxr;
+      py = ny; pz = nz;
+
+      const czr = Math.cos(ring.tiltZ), szr = Math.sin(ring.tiltZ);
+      let nx = px * czr - py * szr;
+      ny = px * szr + py * czr;
+      px = nx; py = ny;
+
+      return { x: cx + px * R, y: cy + py * R, z: pz };
+    }
+
+    function oResize() {
+      const r = orbCanvas.getBoundingClientRect();
+      oW = orbCanvas.width = Math.max(1, r.width * oDpr);
+      oH = orbCanvas.height = Math.max(1, r.height * oDpr);
+      if (!oPlaced) {
+        const cx = oW / 2, cy = oH / 2, R = Math.min(oW, oH) * ORB_RAD;
+        for (let i = 0; i < ON; i++) {
+          const tg = oTarget(i, cx, cy, R);
+          OP[i].x = tg.x; OP[i].y = tg.y;
+        }
+        oPlaced = true;
+      }
+    }
+
+    function oFrame() {
+      if (currentSlide !== 0) { orbRaf = requestAnimationFrame(oFrame); return; }
+      oCtx.clearRect(0, 0, oW, oH);
+      const cx = oW / 2, cy = oH / 2, R = Math.min(oW, oH) * ORB_RAD;
+      const rep = 90 * oDpr, rep2 = rep * rep;
+
+      for (let i = 0; i < ON; i++) {
+        const p = OP[i];
+        const tg = oTarget(i, cx, cy, R);
+        p.x += (tg.x - p.x) * 0.12;
+        p.y += (tg.y - p.y) * 0.12;
+        p.z += (tg.z - p.z) * 0.14;
+
+        const dx = p.x - omx, dy = p.y - omy, dd = dx * dx + dy * dy;
+        if (dd < rep2) {
+          const d = Math.sqrt(dd) || 1;
+          const f = (rep - d) / rep * 8 * oDpr;
+          p.x += dx / d * f;
+          p.y += dy / d * f;
+        }
+
+        const depth = 0.35 + 0.65 * Math.max(0, (p.z + 1) / 2);
+        const rr = (1.5 + 1.8 * depth) * oDpr;
+        const hue = 0 + Math.max(0, Math.min(1, p.x / oW + Math.sin(ot * 0.3 + p.seed) * 0.03)) * 25;
+
+        oCtx.shadowBlur = (3 + depth * 8) * oDpr;
+        oCtx.shadowColor = 'hsla(' + hue + ',88%,50%,0.5)';
+        oCtx.beginPath();
+        oCtx.arc(p.x, p.y, rr, 0, 7);
+        oCtx.fillStyle = 'hsla(' + hue + ',88%,48%,' + (0.35 + 0.5 * depth) + ')';
+        oCtx.fill();
+      }
+      oCtx.shadowBlur = 0;
+      ot += 0.018;
+      orbRaf = requestAnimationFrame(oFrame);
+    }
+
+    function oMove(e) {
+      const r = orbCanvas.getBoundingClientRect();
+      omx = (e.clientX - r.left) * oDpr;
+      omy = (e.clientY - r.top) * oDpr;
+    }
+    function oLeave() { omx = omy = -1e4; }
+    window.addEventListener('mousemove', oMove);
+    window.addEventListener('mouseout', oLeave);
+    oResize();
+    window.addEventListener('resize', oResize);
+    oFrame();
+
+    // --- Slide Navigation ---
+    const totalSlides = 5;
+    const slides = document.querySelectorAll('.slide');
+    const slideTrack = document.getElementById('slideTrack');
+    const progressBar = document.getElementById('progressBar');
+    const slideCounter = document.getElementById('slideCounter');
+
+    function updateSlide() {
+      slideTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+      progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+      slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+      slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+
+      if (currentSlide === 2) {
+        setTimeout(() => {
+          document.querySelectorAll('.bar-fill').forEach(b => {
+            b.style.width = b.dataset.fill + '%';
+          });
+        }, 600);
+      }
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateSlide();
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      updateSlide();
+    }
+
+    document.getElementById('heroBegin').addEventListener('click', nextSlide);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    updateSlide();
+  </script>
+</body>
+</html>
