@@ -331,45 +331,111 @@
 
     /* ===== SLIDES 2-5 ===== */
 
-    /* Slide 2: Problem cards (3 columns) */
-    .problem-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 8px;
+    /* Slide 2: Blurred dashboard mockup */
+    .blind-dashboard {
+      padding: 28px 32px;
+      max-width: 920px;
     }
 
-    .problem-card {
-      padding: 28px;
-      position: relative;
+    .blind-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .blind-header-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .blind-header-period {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .blind-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .blind-table th {
+      text-align: left;
+      font-size: 10px;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 0 0 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .blind-table td {
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .blind-unknown {
+      display: inline-block;
+      background: rgba(0,0,0,0.06);
+      border-radius: 4px;
+      padding: 4px 18px;
+      color: #bbb;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      filter: blur(0.5px);
+    }
+
+    .blind-bar {
+      width: 100px;
+      height: 6px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 3px;
       overflow: hidden;
     }
 
-    .problem-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      margin-bottom: 16px;
-      background: rgba(238, 0, 0, 0.08);
-      color: var(--text);
+    .blind-bar-inner {
+      height: 100%;
+      border-radius: 3px;
+      background: rgba(0,0,0,0.1);
+      filter: blur(2px);
     }
 
-    .problem-title {
+    .blind-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 14px;
+    }
+
+    .blind-total-label {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 20px;
-      margin-bottom: 8px;
+      font-size: 14px;
+      color: #888;
+      font-style: italic;
+    }
+
+    .blind-total-amount {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 32px;
       color: var(--text);
     }
 
-    .problem-text {
-      color: var(--text);
+    .blind-caption {
+      text-align: center;
+      margin-top: 20px;
       font-size: 15px;
-      line-height: 1.6;
+      color: #888;
+      font-style: italic;
     }
 
     /* Slide 3: Invoice */
@@ -547,29 +613,79 @@
       50% { box-shadow: 0 0 0 8px rgba(238,0,0,0); }
     }
 
-    /* Slide 4: Solution cards (3 columns) */
+    /* Slide 4: Pipeline + Solution cards */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .pipe-node {
+      background: var(--bg);
+      border: 1.5px solid rgba(0,0,0,0.12);
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .pipe-node-label {
+      display: block;
+      font-family: var(--font-text);
+      font-weight: 400;
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .pipe-node.pipe-accent {
+      border-color: var(--red);
+      background: rgba(238, 0, 0, 0.04);
+    }
+
+    .pipe-arrow {
+      font-size: 18px;
+      color: #ccc;
+      padding: 0 6px;
+      flex-shrink: 0;
+    }
+
+    .pipe-split {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
     .solution-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 20px;
       margin-top: 8px;
     }
 
     .solution-card {
-      padding: 28px;
+      padding: 24px;
       position: relative;
       overflow: hidden;
     }
 
     .solution-icon {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      margin-bottom: 16px;
+      font-size: 20px;
+      margin-bottom: 12px;
       background: rgba(238, 0, 0, 0.08);
       color: var(--text);
     }
@@ -577,35 +693,15 @@
     .solution-title {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 20px;
+      font-size: 18px;
       margin-bottom: 8px;
       color: var(--text);
     }
 
     .solution-text {
       color: var(--text);
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .check-list {
-      list-style: none;
-      margin-top: 14px;
-    }
-
-    .check-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 4px 0;
       font-size: 14px;
-      color: var(--text);
-    }
-
-    .check-icon {
-      color: var(--red);
-      font-weight: 700;
-      flex-shrink: 0;
+      line-height: 1.6;
     }
 
     /* Slide 5: The Result */
@@ -640,39 +736,84 @@
       margin-bottom: 16px;
     }
 
-    .result-stats {
+    .compare {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-top: 32px;
-      max-width: 900px;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 36px;
+      max-width: 820px;
       margin-left: auto;
       margin-right: auto;
     }
 
-    .result-stat {
-      padding: 20px 16px;
-      text-align: center;
+    .compare-col {
+      padding: 28px;
+      border-radius: 16px;
+      text-align: left;
     }
 
-    .result-stat-value {
-      font-family: var(--font-display);
-      font-weight: 900;
-      font-size: 36px;
+    .compare-col.compare-before {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+    }
+
+    .compare-col.compare-after {
+      background: linear-gradient(160deg, #ffffff, #fff0f0, #ffffff, #ffe0e0, #ffffff);
+      background-size: 220% 220%;
+      animation: gradSweep 8s ease-in-out infinite;
+      border: 1.5px solid transparent;
+      background-clip: padding-box;
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .compare-col.compare-after::before {
+      content: '';
+      position: absolute;
+      inset: -1.5px;
+      border-radius: 17px;
+      padding: 1.5px;
       background: var(--grad-red);
       background-size: 220% 220%;
       animation: gradSweep 8s ease-in-out infinite;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
     }
 
-    .result-stat-label {
-      color: var(--text);
-      font-size: 13px;
-      margin-top: 6px;
-      line-height: 1.4;
+    .compare-label {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
     }
+
+    .compare-before .compare-label { color: #888; }
+    .compare-after .compare-label { color: var(--red); }
+
+    .compare-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .compare-before .compare-item { color: #888; }
+
+    .compare-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+      margin-top: 3px;
+    }
+
+    .compare-before .compare-icon { color: #ccc; }
+    .compare-after .compare-icon { color: var(--red); font-weight: 700; }
 
     .footer {
       margin-top: 48px;
@@ -708,9 +849,12 @@
       .slide { padding: 60px 24px 80px; }
       .slide-title { font-size: 36px; }
       .slide-subtitle { font-size: 18px; }
-      .problem-grid, .solution-grid { grid-template-columns: 1fr; }
+      .solution-grid { grid-template-columns: 1fr; }
       .result-headline { font-size: 36px; }
-      .result-stats { grid-template-columns: repeat(2, 1fr); }
+      .compare { grid-template-columns: 1fr; }
+      .pipeline { gap: 4px; }
+      .pipe-node { padding: 8px 12px; font-size: 12px; }
+      .pipe-arrow { font-size: 14px; padding: 0 3px; }
       .invoice-header { flex-direction: column; gap: 12px; }
       .invoice-total { text-align: left; }
       .bar-cell { display: none; }
@@ -753,23 +897,51 @@
           <h2 class="slide-title anim anim-d1">The <span class="accent">Blindness</span> Problem</h2>
           <p class="slide-subtitle anim anim-d2">Engineering, Marketing, and Support all route through the same MaaS Gateway. GPU bills arrive as one number. Finance can't allocate, forecast, or hold anyone accountable.</p>
           <div class="slide-body">
-            <div class="problem-grid">
-              <div class="problem-card glass anim anim-d3">
-                <div class="problem-icon">&#9888;</div>
-                <div class="problem-title">No Cost Attribution</div>
-                <div class="problem-text">GPU bills arrive as one lump sum. No breakdown by team, model, or project. Finance can't allocate costs to the right P&L.</div>
+            <div class="blind-dashboard glass anim anim-d3">
+              <div class="blind-header">
+                <div class="blind-header-title">AI Infrastructure Cost Report</div>
+                <div class="blind-header-period">Q3 2026</div>
               </div>
-              <div class="problem-card glass anim anim-d4">
-                <div class="problem-icon">&#9783;</div>
-                <div class="problem-title">No Usage Visibility</div>
-                <div class="problem-text">Which team consumes the most tokens? Which model costs the most? Nobody knows until the quarterly invoice arrives.</div>
-              </div>
-              <div class="problem-card glass anim anim-d5">
-                <div class="problem-icon">&#9878;</div>
-                <div class="problem-title">No Forecast Accuracy</div>
-                <div class="problem-text">Without per-department usage data, finance can't build reliable AI spend forecasts. Budget season is pure guesswork.</div>
+              <table class="blind-table">
+                <thead>
+                  <tr>
+                    <th>Cost Center</th>
+                    <th>Model</th>
+                    <th>Tokens</th>
+                    <th>Usage</th>
+                    <th>Cost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="dept-dot" style="background:#1a1a1a"></span><span class="dept-label">Engineering</span></td>
+                    <td><span class="blind-unknown">?</span></td>
+                    <td><span class="blind-unknown">?</span></td>
+                    <td><div class="blind-bar"><div class="blind-bar-inner" style="width:70%"></div></div></td>
+                    <td><span class="blind-unknown">?</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="dept-dot" style="background:#ee0000"></span><span class="dept-label">Marketing</span></td>
+                    <td><span class="blind-unknown">?</span></td>
+                    <td><span class="blind-unknown">?</span></td>
+                    <td><div class="blind-bar"><div class="blind-bar-inner" style="width:45%"></div></div></td>
+                    <td><span class="blind-unknown">?</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="dept-dot" style="background:#888888"></span><span class="dept-label">Support</span></td>
+                    <td><span class="blind-unknown">?</span></td>
+                    <td><span class="blind-unknown">?</span></td>
+                    <td><div class="blind-bar"><div class="blind-bar-inner" style="width:25%"></div></div></td>
+                    <td><span class="blind-unknown">?</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="blind-total">
+                <div class="blind-total-label">"What did AI cost us this quarter, by department?"</div>
+                <div class="blind-total-amount"><span class="blind-unknown" style="font-size:28px;padding:6px 24px">?</span></div>
               </div>
             </div>
+            <p class="blind-caption anim anim-d4">GPU bills arrive as one number. Nobody knows who is spending what.</p>
           </div>
         </div>
       </div>
@@ -841,35 +1013,37 @@
         <div class="slide-inner">
           <div class="slide-number anim">04</div>
           <h2 class="slide-title anim anim-d1">Three Capabilities. <span class="accent">Zero Instrumentation.</span></h2>
-          <p class="slide-subtitle anim anim-d2">Built into OpenShift AI 3.4. API keys from RHOAI Dashboard, metrics from Cluster Observability Operator, dashboards from Perses, traces from MLflow.</p>
+          <p class="slide-subtitle anim anim-d2">Built into OpenShift AI 3.4. No additional tooling required.</p>
           <div class="slide-body">
+            <div class="pipeline anim anim-d2">
+              <div class="pipe-node">API Request<span class="pipe-node-label">per-team key</span></div>
+              <span class="pipe-arrow">&rarr;</span>
+              <div class="pipe-node pipe-accent">MaaS Gateway<span class="pipe-node-label">routes by model + key</span></div>
+              <span class="pipe-arrow">&rarr;</span>
+              <div class="pipe-node">vLLM / llm-d<span class="pipe-node-label">inference</span></div>
+              <span class="pipe-arrow">&rarr;</span>
+              <div class="pipe-node">Prometheus<span class="pipe-node-label">COO scrapes metrics</span></div>
+              <span class="pipe-arrow">&rarr;</span>
+              <div class="pipe-split">
+                <div class="pipe-node pipe-accent">Perses<span class="pipe-node-label">usage dashboards</span></div>
+                <div class="pipe-node pipe-accent">MLflow<span class="pipe-node-label">cost + token traces</span></div>
+              </div>
+            </div>
             <div class="solution-grid">
               <div class="solution-card glass anim anim-d3">
                 <div class="solution-icon">&#9919;</div>
                 <div class="solution-title">MaaS Gateway</div>
-                <div class="solution-text">Each department gets its own API key from RHOAI Dashboard. Gateway routes requests by model and key to vLLM servers.</div>
-                <ul class="check-list">
-                  <li><span class="check-icon">&#10003;</span> API key per department</li>
-                  <li><span class="check-icon">&#10003;</span> Routes to vLLM / llm-d</li>
-                </ul>
+                <div class="solution-text">Each department gets its own API key from the RHOAI Dashboard. The gateway routes requests by model and key to vLLM servers, enabling per-team attribution at the request level.</div>
               </div>
               <div class="solution-card glass anim anim-d4">
                 <div class="solution-icon">&#9881;</div>
                 <div class="solution-title">MLflow Tracing</div>
-                <div class="solution-text">Every inference call logged with token counts, model, and cost. Split by department or view aggregate across the organization.</div>
-                <ul class="check-list">
-                  <li><span class="check-icon">&#10003;</span> Per-request token traces</li>
-                  <li><span class="check-icon">&#10003;</span> Split or aggregate experiments</li>
-                </ul>
+                <div class="solution-text">Every inference call is logged with input/output token counts, model name, latency, and cost. Split by department or view aggregate usage across the organization.</div>
               </div>
               <div class="solution-card glass anim anim-d5">
                 <div class="solution-icon">&#9783;</div>
                 <div class="solution-title">Perses Dashboards</div>
-                <div class="solution-text">OpenShift Console, Observe, Dashboards. Filter by subscription to isolate one team. Filter by model to split costs.</div>
-                <ul class="check-list">
-                  <li><span class="check-icon">&#10003;</span> COO to Prometheus to Perses</li>
-                  <li><span class="check-icon">&#10003;</span> Filter by subscription and model</li>
-                </ul>
+                <div class="solution-text">OpenShift Console &rarr; Observe &rarr; Dashboards. Filter by subscription to isolate one team's usage. Filter by model to understand cost drivers.</div>
               </div>
             </div>
           </div>
@@ -886,22 +1060,20 @@
               <span class="accent">Zero Guesswork.</span>
             </div>
             <p class="result-text anim anim-d2">Every AI dollar traced to a team, a model, a purpose. Built into OpenShift AI &mdash; no additional instrumentation, no third-party billing tools, no manual spreadsheets.</p>
-            <div class="result-stats anim anim-d3">
-              <div class="result-stat glass-gradient">
-                <div class="result-stat-value">Full</div>
-                <div class="result-stat-label">Per-team cost visibility</div>
+            <div class="compare anim anim-d3">
+              <div class="compare-col compare-before">
+                <div class="compare-label">Without Showback</div>
+                <div class="compare-item"><span class="compare-icon">&#10005;</span> One lump GPU bill, no team breakdown</div>
+                <div class="compare-item"><span class="compare-icon">&#10005;</span> Quarterly invoice surprises</div>
+                <div class="compare-item"><span class="compare-icon">&#10005;</span> Manual spreadsheet allocation</div>
+                <div class="compare-item"><span class="compare-icon">&#10005;</span> No visibility into model costs</div>
               </div>
-              <div class="result-stat glass-gradient">
-                <div class="result-stat-value">Real-time</div>
-                <div class="result-stat-label">Showback dashboards</div>
-              </div>
-              <div class="result-stat glass-gradient">
-                <div class="result-stat-value">Faster</div>
-                <div class="result-stat-label">Budget forecasting</div>
-              </div>
-              <div class="result-stat glass-gradient">
-                <div class="result-stat-value">$0</div>
-                <div class="result-stat-label">Additional instrumentation</div>
+              <div class="compare-col compare-after">
+                <div class="compare-label">With Showback</div>
+                <div class="compare-item"><span class="compare-icon">&#10003;</span> Per-team, per-model cost visibility</div>
+                <div class="compare-item"><span class="compare-icon">&#10003;</span> Real-time dashboards (Perses)</div>
+                <div class="compare-item"><span class="compare-icon">&#10003;</span> Every inference request traced (MLflow)</div>
+                <div class="compare-item"><span class="compare-icon">&#10003;</span> Zero additional instrumentation</div>
               </div>
             </div>
           </div>
