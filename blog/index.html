@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>What Did AI Cost Us This Quarter? | Red Hat</title>
-  <meta name="description" content="Track AI inference costs by department on OpenShift AI using MaaS Gateway API keys, Perses dashboards, and MLflow tracing -- no manual instrumentation required.">
+  <meta name="description" content="Track AI inference costs by department on OpenShift AI using MaaS Gateway API keys, Perses dashboards, and MLflow tracing, with no manual instrumentation required.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@700;900&family=Red+Hat+Text:wght@400;500&display=swap" rel="stylesheet">
@@ -270,7 +270,7 @@
   <img src="../redhat-logo.png" alt="Red Hat" class="rh-logo">
   <header class="header-banner">
     <h1>What Did AI Cost Us This Quarter?<br><span class="header-accent">Per-department chargeback on Red Hat OpenShift AI.</span></h1>
-    <div class="header-subtitle">Track AI inference costs by department using MaaS Gateway API keys, Perses dashboards, and MLflow tracing &mdash; no manual instrumentation required.</div>
+    <div class="header-subtitle">Track AI inference costs by department using MaaS Gateway API keys, Perses dashboards, and MLflow tracing, with no manual instrumentation required.</div>
     <div class="header-meta">By Markell Rawls &amp; Suhas Kashyap | Red Hat</div>
   </header>
 
@@ -282,7 +282,7 @@
     </p>
 
     <p>
-      If the answer involves a spreadsheet, a Slack thread to the platform team, and two weeks of detective work, the problem isn't your AI stack. It's visibility. We built a working demo on Red Hat OpenShift AI that answers that question in under a minute, using data the platform already collects. No separate billing tool. No manual instrumentation. Here's how.
+      If the answer involves a spreadsheet, a Slack thread to the platform team, and two weeks of detective work, the problem isn't your AI stack but your visibility into it. We built a working demo on Red Hat OpenShift AI that answers that question in under a minute, using data the platform already collects and without a separate billing tool or manual instrumentation. Here's how.
     </p>
 
     <h2>Why per-department cost tracking matters</h2>
@@ -307,7 +307,7 @@
     </div>
 
     <p>
-      Our demo's sample quarterly report shows what that looks like in practice. Three departments generated 79,420 inference requests and consumed 634 million tokens over a quarter, totaling $14,200 in estimated cost. That's the easy number. The useful number is that Marketing was running at 32% GPU utilization &mdash; meaning 68% of their allocated GPU capacity sat idle. At $50,000 per GPU node per year, that's roughly $34,000 in annual idle capacity that nobody would catch without per-department metrics.
+      Our demo's sample quarterly report shows what that looks like in practice. Three departments generated 79,420 inference requests and consumed 634 million tokens over a quarter, totaling $14,200 in estimated cost. That's the easy number. The useful number is that Marketing was running at 32% GPU utilization, meaning 68% of their allocated GPU capacity sat idle. At $50,000 per GPU node per year, that's roughly $34,000 in annual idle capacity that nobody would catch without per-department metrics.
     </p>
 
     <div class="pullquote">
@@ -329,7 +329,7 @@
     </p>
 
     <p>
-      <strong>Prometheus via the Cluster Observability Operator (COO)</strong> auto-scrapes token consumption metrics from the model servers. No sidecar injection, no custom exporters, no configuration. When you deploy a model through MaaS, Prometheus starts collecting per-user, per-model token metrics automatically.
+      <strong>Prometheus via the Cluster Observability Operator (COO)</strong> auto-scrapes token consumption metrics from the model servers without sidecar injection, custom exporters, or additional configuration. When you deploy a model through MaaS, Prometheus starts collecting per-user, per-model token metrics automatically.
     </p>
 
     <p>
@@ -347,7 +347,7 @@
     </p>
 
     <p>
-      When a platform team creates three API keys in Gen AI Studio, each key shows up as a distinct subscription in the Perses Usage dashboard. Every token consumed under that key is attributed to that department. Every request is traceable to the team that made it.
+      When a platform team creates three API keys in Gen AI Studio, each key shows up as a distinct subscription in the Perses Usage dashboard, so every token consumed under that key is attributed to that department and every request is traceable to the team that made it.
     </p>
 
     <div class="callout">
@@ -363,7 +363,7 @@
     </p>
 
     <p>
-      In our demo running three departments for five minutes, we see Engineering consuming roughly 60% of tokens, Marketing at about 25%, and Support at about 15%. The breakdown appears in real time &mdash; no aggregation delay, no batch processing.
+      In our demo running three departments for five minutes, we see Engineering consuming roughly 60% of tokens, Marketing at about 25%, and Support at about 15%. The breakdown appears in real time without any aggregation delay or batch processing.
     </p>
 
     <h3>MLflow: the application view</h3>
@@ -383,7 +383,7 @@
     &#9492;&#9472;&#9472; latency: 2.4s</code></pre>
 
     <p>
-      This means you can answer not just "how much did engineering spend?" but "what were they spending it on?" The traces show the specific prompts &mdash; code reviews, API design questions, unit test generation &mdash; and the cost of each one.
+      This means you can answer not just "how much did engineering spend?" but "what were they spending it on?" The traces show the specific prompts (code reviews, API design questions, unit test generation) and the cost of each one.
     </p>
 
     <h2>The cost model</h2>
@@ -429,7 +429,7 @@ def calculate_cost(model, input_tokens, output_tokens):
            (output_tokens / 1000 * rates["output"])</code></pre>
 
     <p>
-      The input/output split matters. Engineering's workloads are heavy on both &mdash; long code context as input, detailed analysis as output. Support uses short customer questions and short answers on a model that costs 3x less per token. That cost difference is invisible if you're only tracking total tokens.
+      The input/output split matters because Engineering's workloads are heavy on both sides, with long code context as input and detailed analysis as output. Support uses short customer questions and short answers on a model that costs 3x less per token (based on the pricing table above). That cost difference is invisible if you're only tracking total tokens.
     </p>
 
     <h2>From dashboards to board reports</h2>
@@ -442,22 +442,22 @@ def calculate_cost(model, input_tokens, output_tokens):
       <div class="report-card">
         <h4>Engineering (60%)</h4>
         <div class="big-num">$9,120</div>
-        <p>GPU utilization at 78% &mdash; healthy, no changes needed</p>
+        <p>GPU utilization at 78%, healthy with no changes needed</p>
       </div>
       <div class="report-card">
         <h4>Marketing (25%)</h4>
         <div class="big-num">$3,550</div>
-        <p>GPU utilization at 32% &mdash; oversized allocation, recommend right-sizing</p>
+        <p>GPU utilization at 32%, oversized allocation that should be right-sized</p>
       </div>
       <div class="report-card">
         <h4>Support (15%)</h4>
         <div class="big-num">$1,530</div>
-        <p>GPU utilization at 45% &mdash; reasonable for burst workloads, cheaper model</p>
+        <p>GPU utilization at 45%, reasonable for burst workloads on a cheaper model</p>
       </div>
     </div>
 
     <p>
-      The action items write themselves. Marketing's GPU allocation is too large. Engineering's September costs dropped 15% after a model quantization optimization. Support made a good call using the smaller model. This is cost governance, not monitoring.
+      The action items write themselves: Marketing's GPU allocation is too large and should be right-sized, while Support made a good call using the smaller model for their workload. This kind of per-department visibility turns cost tracking into cost governance.
     </p>
 
     <h2>Get started</h2>
@@ -478,7 +478,7 @@ python generate-load.py --duration 5</code></pre>
     <h2>What's coming in OpenShift AI 3.5</h2>
 
     <p>
-      The current approach gives you dashboard-level visibility. In OpenShift AI 3.5, a metering webhook pushes per-request token events directly to your billing system &mdash; user, model, input tokens, output tokens, latency, and request ID. That moves chargeback from "check the dashboard" to "it's in your invoice automatically."
+      The current approach gives you dashboard-level visibility. In OpenShift AI 3.5, a metering webhook is expected to push per-request token events directly to your billing system, including user, model, input tokens, output tokens, latency, and request ID. That would move chargeback from manual dashboard checks to automated invoice generation.
     </p>
 
     <h2>Try it yourself</h2>
