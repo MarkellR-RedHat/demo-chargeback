@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What Did AI Cost Us This Quarter? | Red Hat</title>
+  <meta name="description" content="Track AI inference costs by department on OpenShift AI using MaaS Gateway API keys, Perses dashboards, and MLflow tracing -- no manual instrumentation required.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@700;900&family=Red+Hat+Text:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Red Hat Text', sans-serif;
+      font-size: 17px;
+      line-height: 1.75;
+      background: #ffffff;
+      color: #1a1a1a;
+    }
+
+    h1, h2, h3 { font-family: 'Red Hat Display', sans-serif; }
+
+    .header-banner {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .header-banner h1 {
+      font-weight: 900;
+      font-size: 2.75rem;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .header-accent {
+      background: linear-gradient(135deg, #EE0000, #d4910a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-subtitle {
+      font-size: 1.2rem;
+      color: #ccc;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.6;
+    }
+
+    .header-meta {
+      font-size: 0.9rem;
+      color: #999;
+    }
+
+    article {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    h2 {
+      font-weight: 700;
+      font-size: 1.65rem;
+      line-height: 1.3;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 3px solid #EE0000;
+    }
+
+    h3 {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    p { margin-bottom: 1.25rem; }
+
+    .lead {
+      font-size: 1.15rem;
+      color: #333;
+      line-height: 1.8;
+    }
+
+    .pullquote {
+      font-family: 'Red Hat Display', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      line-height: 1.4;
+      color: #CC0000;
+      border-left: 4px solid #EE0000;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .callout {
+      background: #FFF5F5;
+      border-left: 4px solid #EE0000;
+      padding: 1.25rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+
+    .callout p { margin-bottom: 0; }
+
+    .callout-dark {
+      background: #f5f5f5;
+      border-left-color: #333;
+    }
+
+    ul { margin: 1rem 0 1.25rem 2rem; }
+    li { margin-bottom: 0.75rem; line-height: 1.75; }
+
+    a { color: #CC0000; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    strong { font-weight: 500; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    thead th {
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Red Hat Display', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    tbody td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    tbody tr:nth-child(even) { background: #f8f8f8; }
+
+    pre {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+
+    p code {
+      background: #f5f5f5;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      color: #CC0000;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .report-card {
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .report-card h4 {
+      font-family: 'Red Hat Display', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+      color: #CC0000;
+    }
+
+    .report-card .big-num {
+      font-family: 'Red Hat Display', sans-serif;
+      font-weight: 900;
+      font-size: 1.75rem;
+      color: #1a1a1a;
+      margin-bottom: 0.25rem;
+    }
+
+    .report-card p {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 0;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .stat-item .stat-num {
+      font-family: 'Red Hat Display', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      color: #CC0000;
+    }
+
+    .stat-item .stat-label {
+      font-size: 0.85rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .rh-logo {
+      position: fixed;
+      top: 24px;
+      right: 32px;
+      z-index: 101;
+      height: 36px;
+    }
+
+    footer {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-top: 2px solid #e0e0e0;
+      text-align: center;
+    }
+
+    .footer-links { margin-bottom: 1rem; }
+    .footer-links a { margin: 0 1rem; }
+
+    .footer-attribution {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .header-banner h1 { font-size: 2rem; }
+      article { padding: 2rem 1.5rem; }
+      h2 { font-size: 1.4rem; }
+      .pullquote { font-size: 1.2rem; }
+      .report-grid { grid-template-columns: 1fr; }
+      .stat-row { flex-direction: column; gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <img src="../redhat-logo.png" alt="Red Hat" class="rh-logo">
+  <header class="header-banner">
+    <h1>What Did AI Cost Us This Quarter?<br><span class="header-accent">Per-department chargeback on Red Hat OpenShift AI.</span></h1>
+    <div class="header-subtitle">Track AI inference costs by department using MaaS Gateway API keys, Perses dashboards, and MLflow tracing &mdash; no manual instrumentation required.</div>
+    <div class="header-meta">By Markell Rawls &amp; Suhas Kashyap | Red Hat</div>
+  </header>
+
+  <article>
+    <h2>The question nobody can answer</h2>
+
+    <p class="lead">
+      Three departments share your AI inference platform. Engineering sends code review prompts through a 27-billion-parameter model every five seconds. Marketing generates campaign copy on the same model every twelve seconds. Support handles customer questions on a smaller, cheaper model every twenty seconds. At the end of the quarter, finance asks what each team spent.
+    </p>
+
+    <p>
+      If the answer involves a spreadsheet, a Slack thread to the platform team, and two weeks of detective work, the problem isn't your AI stack. It's visibility. We built a working demo on Red Hat OpenShift AI that answers that question in under a minute, using data the platform already collects. No separate billing tool. No manual instrumentation. Here's how.
+    </p>
+
+    <h2>Why per-department cost tracking matters</h2>
+
+    <p>
+      When multiple teams share a GPU cluster for inference, someone pays for it. Without per-department attribution, the bill goes to the platform team, and nobody has a reason to be efficient.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-item">
+        <div class="stat-num">$14,200</div>
+        <div class="stat-label">Quarterly cost</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">79,420</div>
+        <div class="stat-label">Requests</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">634M</div>
+        <div class="stat-label">Tokens</div>
+      </div>
+    </div>
+
+    <p>
+      Our demo's sample quarterly report shows what that looks like in practice. Three departments generated 79,420 inference requests and consumed 634 million tokens over a quarter, totaling $14,200 in estimated cost. That's the easy number. The useful number is that Marketing was running at 32% GPU utilization &mdash; meaning 68% of their allocated GPU capacity sat idle. At $50,000 per GPU node per year, that's roughly $34,000 in annual idle capacity that nobody would catch without per-department metrics.
+    </p>
+
+    <div class="pullquote">
+      The difference between "AI costs $14,200 this quarter" and "Engineering consumed 60% on the premium model, Marketing is underutilizing their allocation, and Support is using the right model for their workload" is the difference between a cost center and a managed platform.
+    </div>
+
+    <h2>How the observability stack works</h2>
+
+    <p>
+      The cost attribution system runs on four components, all available in OpenShift AI 3.4 and later:
+    </p>
+
+    <p>
+      <strong>MaaS Gateway</strong> sits in front of your model servers. Each department gets its own API key, created in the OpenShift AI Dashboard under Gen AI Studio. The gateway routes requests by model and authenticates them by key. That key becomes the identity boundary for everything that follows.
+    </p>
+
+    <p>
+      <strong>vLLM or llm-d</strong> serves the models. In our demo, we run two: a primary model (gemma4) shared by Engineering and Marketing, and a secondary model (qwen35-9b) for Support. The serving layer reports token counts per request back to Prometheus.
+    </p>
+
+    <p>
+      <strong>Prometheus via the Cluster Observability Operator (COO)</strong> auto-scrapes token consumption metrics from the model servers. No sidecar injection, no custom exporters, no configuration. When you deploy a model through MaaS, Prometheus starts collecting per-user, per-model token metrics automatically.
+    </p>
+
+    <p>
+      <strong>Perses dashboards</strong> visualize the data at OpenShift Console &gt; Observe &gt; Dashboards &gt; Usage. You can filter by subscription (API key) to isolate one department, or filter by model to see cost differences between workloads.
+    </p>
+
+    <p>
+      On top of this, <strong>MLflow</strong> traces every inference request at the application level. Each trace contains the department name, the prompt (truncated), the model, input and output token counts, latency, and calculated cost. These traces live in the OpenShift AI Dashboard under MLflow.
+    </p>
+
+    <h2>API keys as cost boundaries</h2>
+
+    <p>
+      The cost isolation in this system comes from one mechanism: one API key per department.
+    </p>
+
+    <p>
+      When a platform team creates three API keys in Gen AI Studio, each key shows up as a distinct subscription in the Perses Usage dashboard. Every token consumed under that key is attributed to that department. Every request is traceable to the team that made it.
+    </p>
+
+    <div class="callout">
+      <p>Cost attribution doesn't require changes to application code. If a team is already calling the MaaS Gateway with an API key, their usage is being tracked. The data is already there.</p>
+    </div>
+
+    <h2>What the dashboards tell you</h2>
+
+    <h3>Perses: the platform view</h3>
+
+    <p>
+      The Perses Usage dashboard answers the platform team's questions: total tokens consumed across all departments, per-user breakdown by API key, per-model token distribution, and filtering by subscription or model.
+    </p>
+
+    <p>
+      In our demo running three departments for five minutes, we see Engineering consuming roughly 60% of tokens, Marketing at about 25%, and Support at about 15%. The breakdown appears in real time &mdash; no aggregation delay, no batch processing.
+    </p>
+
+    <h3>MLflow: the application view</h3>
+
+    <p>
+      MLflow adds context that Prometheus can't capture. Each request creates a two-span trace structure: a parent AGENT span with the department name and prompt, and a child CHAT_MODEL span with the model, token counts, latency, and cost.
+    </p>
+
+    <pre><code>AGENT span: engineering_agent
+&#9500;&#9472;&#9472; input: "Review this Go module for concurrency issues..."
+&#9500;&#9472;&#9472; department: engineering
+&#9492;&#9472;&#9472; CHAT_MODEL span: generate_response
+    &#9500;&#9472;&#9472; model: gemma4
+    &#9500;&#9472;&#9472; input_tokens: 487
+    &#9500;&#9472;&#9472; output_tokens: 312
+    &#9500;&#9472;&#9472; cost: $0.02143
+    &#9492;&#9472;&#9472; latency: 2.4s</code></pre>
+
+    <p>
+      This means you can answer not just "how much did engineering spend?" but "what were they spending it on?" The traces show the specific prompts &mdash; code reviews, API design questions, unit test generation &mdash; and the cost of each one.
+    </p>
+
+    <h2>The cost model</h2>
+
+    <p>
+      Cost attribution needs a cost model. We define per-model pricing as cost per 1,000 tokens, split between input and output:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Input cost per 1K tokens</th>
+          <th>Output cost per 1K tokens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>gemma4 (primary)</td>
+          <td>$0.015</td>
+          <td>$0.045</td>
+        </tr>
+        <tr>
+          <td>qwen35-9b (secondary)</td>
+          <td>$0.005</td>
+          <td>$0.015</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      The cost calculation in the load generator is straightforward:
+    </p>
+
+    <pre><code>COST_PER_1K = {
+    "gemma4":    {"input": 0.015, "output": 0.045},
+    "qwen35-9b": {"input": 0.005, "output": 0.015},
+}
+
+def calculate_cost(model, input_tokens, output_tokens):
+    rates = COST_PER_1K.get(model, {"input": 0.01, "output": 0.03})
+    return (input_tokens / 1000 * rates["input"]) + \
+           (output_tokens / 1000 * rates["output"])</code></pre>
+
+    <p>
+      The input/output split matters. Engineering's workloads are heavy on both &mdash; long code context as input, detailed analysis as output. Support uses short customer questions and short answers on a model that costs 3x less per token. That cost difference is invisible if you're only tracking total tokens.
+    </p>
+
+    <h2>From dashboards to board reports</h2>
+
+    <p>
+      The data the platform collects maps directly to the kind of report a VP of Finance expects:
+    </p>
+
+    <div class="report-grid">
+      <div class="report-card">
+        <h4>Engineering (60%)</h4>
+        <div class="big-num">$9,120</div>
+        <p>GPU utilization at 78% &mdash; healthy, no changes needed</p>
+      </div>
+      <div class="report-card">
+        <h4>Marketing (25%)</h4>
+        <div class="big-num">$3,550</div>
+        <p>GPU utilization at 32% &mdash; oversized allocation, recommend right-sizing</p>
+      </div>
+      <div class="report-card">
+        <h4>Support (15%)</h4>
+        <div class="big-num">$1,530</div>
+        <p>GPU utilization at 45% &mdash; reasonable for burst workloads, cheaper model</p>
+      </div>
+    </div>
+
+    <p>
+      The action items write themselves. Marketing's GPU allocation is too large. Engineering's September costs dropped 15% after a model quantization optimization. Support made a good call using the smaller model. This is cost governance, not monitoring.
+    </p>
+
+    <h2>Get started</h2>
+
+    <p>
+      The demo runs on OpenShift AI 3.4 or later. Clone the <a href="https://github.com/suhasvkashyap/demo-chargeback">demo-chargeback repository</a>, configure your environment, and generate traffic:
+    </p>
+
+    <pre><code>cp .env.example .env
+# Edit .env: set MAAS_GATEWAY, API keys, MLflow URI
+
+python generate-load.py --duration 5</code></pre>
+
+    <p>
+      Within five minutes, your Perses and MLflow dashboards will show per-department cost attribution data. The repository includes prompt sets for all three departments, on-cluster deployment via Kubernetes Job, and a presenter walkthrough for live demos.
+    </p>
+
+    <h2>What's coming in OpenShift AI 3.5</h2>
+
+    <p>
+      The current approach gives you dashboard-level visibility. In OpenShift AI 3.5, a metering webhook pushes per-request token events directly to your billing system &mdash; user, model, input tokens, output tokens, latency, and request ID. That moves chargeback from "check the dashboard" to "it's in your invoice automatically."
+    </p>
+
+    <h2>Try it yourself</h2>
+
+    <p>
+      The demo is open source and runs from a laptop or on your cluster. Start with the <a href="https://github.com/suhasvkashyap/demo-chargeback">demo-chargeback repository on GitHub</a>, or learn more about OpenShift AI observability in the <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/">product documentation</a>.
+    </p>
+  </article>
+
+  <footer>
+    <div class="footer-links">
+      <a href="../index.html">Interactive Overview</a>
+    </div>
+    <div class="footer-attribution">
+      Markell Rawls &amp; Suhas Kashyap | Red Hat
+    </div>
+  </footer>
+</body>
+</html>
